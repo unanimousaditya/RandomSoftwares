@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gemini AI Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Animate.css -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+      rel="stylesheet"
+    />
+    <!-- AOS - Animate On Scroll -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #8e24aa;
+        --primary-light: #c158dc;
+        --primary-dark: #5c007a;
+        --secondary: #00c853;
+        --secondary-light: #5efc82;
+        --secondary-dark: #009624;
+        --dark: #212121;
+        --light: #fafafa;
+        --grey: #f5f5f5;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+
+      .navbar-brand img {
+        margin-right: 10px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .api-key-section {
+        background: linear-gradient(145deg, #ffffff, #f5f5f5);
+        padding: 25px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+        transform: translateY(0);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .api-key-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .form-floating {
+        margin-top: 15px;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(142, 36, 170, 0.25);
+      }
+
+      .chat-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(145deg, #ffffff, #f5f5f5);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+        position: relative;
+        min-height: 500px;
+      }
+
+      .chat-header {
+        background: linear-gradient(
+          90deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: white;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+      }
+
+      .chat-header h5 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .chat-header .status {
+        width: 10px;
+        height: 10px;
+        background-color: var(--secondary);
+        border-radius: 50%;
+        margin-right: 10px;
+        position: relative;
+      }
+
+      .chat-header .status::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: var(--secondary);
+        border-radius: 50%;
+        animation: ripple 1.5s infinite;
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(3);
+          opacity: 0;
+        }
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23f0f0f0" fill-opacity="0.4" fill-rule="evenodd"/%3E%3C/svg%3E');
+      }
+
+      .message {
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 18px;
+        max-width: 80%;
+        line-height: 1.5;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .user-message {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+        animation: slideInRight 0.3s ease forwards;
+      }
+
+      .bot-message {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+        border: 1px solid #e0e0e0;
+        margin-right: auto;
+        border-bottom-left-radius: 4px;
+        animation: slideInLeft 0.3s ease forwards;
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .message::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.5);
+        transition: width 1s ease;
+      }
+
+      .message:hover::before {
+        width: 100%;
+      }
+
+      .message-time {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        text-align: right;
+        margin-top: 5px;
+      }
+
+      .chat-input-container {
+        display: flex;
+        padding: 15px;
+        border-top: 1px solid #eee;
+        background-color: white;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+      }
+
+      .chat-input-group {
+        position: relative;
+        display: flex;
+        flex: 1;
+      }
+
+      #user-input {
+        border-radius: 30px;
+        padding-right: 50px;
+        height: 50px;
+        font-size: 1rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        margin-left: 10px;
+      }
+
+      .btn-send {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+
+      .btn-send:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--primary)
+        );
+      }
+
+      .btn-send:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        transform: scale(1);
+        box-shadow: none;
+      }
+
+      .thinking {
+        display: flex;
+        align-items: center;
+        margin-right: auto;
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: #f1f3f4;
+        border-radius: 18px;
+        border-bottom-left-radius: 4px;
+        animation: slideInLeft 0.3s ease forwards;
+      }
+
+      .thinking-dots {
+        display: flex;
+      }
+
+      .dot {
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        margin: 0 3px;
+        opacity: 0.8;
+      }
+
+      .dot:nth-child(1) {
+        animation: bounce 1.2s infinite 0s;
+      }
+
+      .dot:nth-child(2) {
+        animation: bounce 1.2s infinite 0.2s;
+      }
+
+      .dot:nth-child(3) {
+        animation: bounce 1.2s infinite 0.4s;
+      }
+
+      @keyframes bounce {
+        0%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+      }
+
+      code {
+        font-family: "Fira Code", "Courier New", Courier, monospace;
+        background-color: rgba(0, 0, 0, 0.05);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.9em;
+      }
+
+      .user-message code {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      pre {
+        background-color: #282c34;
+        color: #abb2bf;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 10px 0;
+      }
+
+      .user-message pre {
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+
+      pre code {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+      }
+
+      .loader-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .loader {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--primary-light);
+        border-radius: 50%;
+        border-top-color: var(--primary-dark);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .features {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .feature-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--primary)
+        );
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .dark-mode {
+        background: #121212;
+        color: white;
+      }
+
+      .dark-mode .api-key-section,
+      .dark-mode .chat-container,
+      .dark-mode .feature-card {
+        background: linear-gradient(145deg, #1e1e1e, #2d2d2d);
+        color: white;
+      }
+
+      .dark-mode .chat-messages {
+        background-color: #1a1a1a;
+        background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23333" fill-opacity="0.2" fill-rule="evenodd"/%3E%3C/svg%3E');
+      }
+
+      .dark-mode .form-control,
+      .dark-mode .form-floating label {
+        background-color: #333;
+        color: white;
+        border-color: #444;
+      }
+
+      .dark-mode .form-control:focus {
+        background-color: #444;
+        color: white;
+      }
+
+      .dark-mode .chat-input-container {
+        background-color: #1a1a1a;
+        border-color: #333;
+      }
+
+      .dark-mode .bot-message {
+        background: linear-gradient(135deg, #2d2d2d, #3d3d3d);
+        color: #f0f0f0;
+        border-color: #444;
+      }
+
+      .dark-mode code {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .dark-mode .loader-wrapper {
+        background: rgba(0, 0, 0, 0.8);
+      }
+
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-dark-mode:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        .feature-card {
+          margin-bottom: 20px;
+        }
+
+        .message {
+          max-width: 90%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Loader -->
+    <div class="loader-wrapper" id="loader">
+      <div class="loader"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="
+        background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+      "
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <i class="fas fa-robot me-2"></i>
+          Gemini AI Assistant
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#"
+                ><i class="fas fa-home me-1"></i> Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                ><i class="fas fa-info-circle me-1"></i> About</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                ><i class="fas fa-question-circle me-1"></i> Help</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      <!-- Features Section -->
+      <div class="row features" data-aos="fade-up">
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h4>Gemini 2.0 Flash</h4>
+            <p>
+              Powered by Google's advanced AI model for fast, intelligent
+              responses.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h4>Lightning Fast</h4>
+            <p>
+              Get instant responses with minimal latency for a smooth
+              conversation experience.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h4>Secure Access</h4>
+            <p>
+              Your API key is stored locally and never sent to our servers for
+              maximum security.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Key Section -->
+      <div class="api-key-section" data-aos="fade-up">
+        <h3 class="mb-3"><i class="fas fa-key me-2"></i>API Key</h3>
+        <p>
+          Enter your Gemini API key to start chatting with this AI assistant:
+        </p>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            id="apiKeyInput"
+            placeholder="Enter your Gemini API key"
+          />
+          <label for="apiKeyInput">Enter your Gemini API key</label>
+        </div>
+      </div>
+
+      <!-- Chat Container -->
+      <div class="chat-container" data-aos="fade-up">
+        <div class="chat-header">
+          <h5><span class="status"></span> Gemini AI</h5>
+          <div>
+            <span id="connection-status">Waiting for API key...</span>
+          </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="message bot-message animate__animated animate__fadeIn">
+            <p>
+              Hi there! I'm your Gemini 2.0 Flash-powered AI assistant. Enter
+              your API key above to start chatting with me.
+            </p>
+            <p class="message-time">Just now</p>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <div class="chat-input-group flex-grow-1">
+            <input
+              type="text"
+              class="form-control"
+              id="user-input"
+              placeholder="Enter API key first..."
+              disabled
+            />
+          </div>
+          <div class="action-buttons">
+            <button class="btn-send" id="send-button" disabled>
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div class="toggle-dark-mode" id="toggle-dark-mode">
+      <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+      <div class="container text-center">
+        <div class="row">
+          <div class="col-md-4">
+            <h5>Gemini AI Assistant</h5>
+            <p class="small">Powered by Google's Gemini 2.0 Flash API</p>
+          </div>
+          <div class="col-md-4">
+            <h5>Links</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-light">Documentation</a></li>
+              <li><a href="#" class="text-light">API Reference</a></li>
+              <li><a href="#" class="text-light">Support</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5>Connect</h5>
+            <div class="d-flex justify-content-center gap-3 mt-2">
+              <a href="#" class="text-light"
+                ><i class="fab fa-twitter fa-lg"></i
+              ></a>
+              <a href="#" class="text-light"
+                ><i class="fab fa-github fa-lg"></i
+              ></a>
+              <a href="#" class="text-light"
+                ><i class="fab fa-linkedin fa-lg"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+        <hr class="my-3 bg-light" />
+        <p class="small mb-0">
+          © 2025 Gemini AI Assistant. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <script>
+      // Initialize AOS
+      document.addEventListener("DOMContentLoaded", function () {
+        AOS.init({
+          duration: 800,
+          easing: "ease-in-out",
+          once: true,
+        });
+
+        // Hide loader after content loads
+        setTimeout(function () {
+          document.getElementById("loader").style.opacity = "0";
+          setTimeout(function () {
+            document.getElementById("loader").style.display = "none";
+          }, 500);
+        }, 1200);
+      });
+
+      const apiKeyInput = document.getElementById("apiKeyInput");
+      const userInput = document.getElementById("user-input");
+      const sendButton = document.getElementById("send-button");
+      const chatMessages = document.getElementById("chat-messages");
+      const connectionStatus = document.getElementById("connection-status");
+      const toggleDarkMode = document.getElementById("toggle-dark-mode");
+
+      let apiKey = "";
+      let isDarkMode = false;
+
+      // Enable/disable dark mode
+      toggleDarkMode.addEventListener("click", function () {
+        document.body.classList.toggle("dark-mode");
+        isDarkMode = !isDarkMode;
+
+        const icon = toggleDarkMode.querySelector("i");
+        if (isDarkMode) {
+          icon.classList.remove("fa-moon");
+          icon.classList.add("fa-sun");
+        } else {
+          icon.classList.remove("fa-sun");
+          icon.classList.add("fa-moon");
+        }
+
+        // Save preference
+        localStorage.setItem("darkMode", isDarkMode);
+      });
+
+      // Check for saved dark mode preference
+      if (localStorage.getItem("darkMode") === "true") {
+        toggleDarkMode.click();
+      }
+
+      // Enable chat when API key is entered
+      apiKeyInput.addEventListener("input", function () {
+        apiKey = this.value.trim();
+        userInput.disabled = !apiKey;
+        sendButton.disabled = !apiKey;
+
+        if (apiKey) {
+          userInput.placeholder = "Type your message here...";
+          userInput.focus();
+          connectionStatus.innerHTML =
+            '<span class="badge bg-success">Connected</span>';
+          connectionStatus.classList.add(
+            "animate__animated",
+            "animate__fadeIn"
+          );
+        } else {
+          userInput.placeholder = "Enter API key first...";
+          connectionStatus.innerHTML =
+            '<span class="badge bg-warning text-dark">Waiting for API key...</span>';
+        }
+      });
+
+      // Check for saved API key in localStorage
+      const savedApiKey = localStorage.getItem("geminiApiKey");
+      if (savedApiKey) {
+        apiKeyInput.value = savedApiKey;
+        apiKey = savedApiKey;
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.placeholder = "Type your message here...";
+        connectionStatus.innerHTML =
+          '<span class="badge bg-success">Connected</span>';
+      }
+
+      // Send message when button is clicked
+      sendButton.addEventListener("click", sendMessage);
+
+      // Send message when Enter key is pressed
+      userInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+
+      function getCurrentTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const ampm = hours >= 12 ? "PM" : "AM";
+
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+
+        return hours + ":" + minutes + " " + ampm;
+      }
+
+      function addMessage(text, isUser) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.classList.add(isUser ? "user-message" : "bot-message");
+        messageDiv.classList.add("animate__animated");
+        messageDiv.classList.add(
+          isUser ? "animate__slideInRight" : "animate__slideInLeft"
+        );
+
+        // Process text for code blocks and markdown
+        let formattedText = text;
+
+        // Replace markdown code blocks with HTML
+        formattedText = formattedText.replace(
+          /```([\s\S]*?)```/g,
+          function (match, code) {
+            return `<pre><code>${code.trim()}</code></pre>`;
+          }
+        );
+
+        // Replace inline code with HTML
+        formattedText = formattedText.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+        // Handle line breaks
+        formattedText = formattedText.replace(/\n/g, "<br>");
+
+        // Add message time
+        const timeStr = `<p class="message-time">${getCurrentTime()}</p>`;
+
+        messageDiv.innerHTML = `<p>${formattedText}</p>${timeStr}`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Save API key to localStorage if valid
+        if (apiKey && !isUser) {
+          localStorage.setItem("geminiApiKey", apiKey);
+        }
+      }
+
+      function showThinking() {
+        const thinkingDiv = document.createElement("div");
+        thinkingDiv.classList.add("thinking");
+        thinkingDiv.id = "thinking-indicator";
+
+        const thinkingDots = document.createElement("div");
+        thinkingDots.classList.add("thinking-dots");
+
+        for (let i = 0; i < 3; i++) {
+          const dot = document.createElement("div");
+          dot.classList.add("dot");
+          thinkingDots.appendChild(dot);
+        }
+
+        thinkingDiv.appendChild(thinkingDots);
+        chatMessages.appendChild(thinkingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function hideThinking() {
+        const thinkingDiv = document.getElementById("thinking-indicator");
+        if (thinkingDiv) {
+          thinkingDiv.remove();
+        }
+      }
+
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        addMessage(message, true);
+        userInput.value = "";
+        userInput.focus();
+
+        // Show thinking indicator
+        showThinking();
+
+        try {
+          // Call Gemini API
+          const response = await fetchGeminiResponse(message);
+
+          // Hide thinking indicator
+          hideThinking();
+
+          // Add bot response to chat with a slight delay for better UX
+          setTimeout(() => {
+            addMessage(response, false);
+          }, 300);
+        } catch (error) {
+          // Hide thinking indicator
+          hideThinking();
+
+          // Show error message
+          setTimeout(() => {
+            addMessage(
+              `Error: ${error.message}. Please check your API key and try again.`,
+              false
+            );
+          }, 300);
+        }
+      }
+
+      async function fetchGeminiResponse(message) {
+        // Updated to use Gemini 2.0 Flash model
+        const url =
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+
+        const payload = {
+          contents: [
+            {
+              parts: [
+                {
+                  text: message,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 2048,
+          },
+        };
+
+        // Add some randomness to simulate network latency for a more natural feel
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.random() * 500 + 300)
+        );
+
+        const response = await fetch(`${url}?key=${apiKey}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.error?.message || "Failed to get response from Gemini API"
+          );
+        }
+
+        const data = await response.json();
+
+        if (
+          data.candidates &&
+          data.candidates.length > 0 &&
+          data.candidates[0].content &&
+          data.candidates[0].content.parts &&
+          data.candidates[0].content.parts.length > 0
+        ) {
+          return data.candidates[0].content.parts[0].text;
+        } else {
+          throw new Error("Invalid response format from Gemini API");
+        }
+      }
+
+      // Fun confetti effect when API key is first entered
+      apiKeyInput.addEventListener("change", function () {
+        if (this.value.trim() && !localStorage.getItem("geminiApiKey")) {
+          showConfetti();
+        }
+      });
+
+      function showConfetti() {
+        const confettiCount = 200;
+        const colors = [
+          "#ff0000",
+          "#00ff00",
+          "#0000ff",
+          "#ffff00",
+          "#ff00ff",
+          "#00ffff",
+        ];
+
+        for (let i = 0; i < confettiCount; i++) {
+          const confetti = document.createElement("div");
+          confetti.style.position = "fixed";
+          confetti.style.width = Math.random() * 10 + 5 + "px";
+          confetti.style.height = Math.random() * 10 + 5 + "px";
+          confetti.style.backgroundColor =
+            colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.left = Math.random() * 100 + "vw";
+          confetti.style.top = -20 + "px";
+          confetti.style.borderRadius = "50%";
+          confetti.style.zIndex = "9999";
+
+          document.body.appendChild(confetti);
+
+          const animationDuration = Math.random() * 3 + 2;
+          const horizontalSwing = Math.random() * 40 - 20;
+
+          confetti.animate(
+            [
+              { transform: "translateY(0) rotate(0deg)", opacity: 1 },
+              {
+                transform: `translateY(100vh) translateX(${horizontalSwing}vw) rotate(${
+                  Math.random() * 360
+                }deg)`,
+                opacity: 0,
+              },
+            ],
+            {
+              duration: animationDuration * 1000,
+              easing: "cubic-bezier(0.215, 0.61, 0.355, 1)",
+            }
+          ).onfinish = function () {
+            confetti.remove();
+          };
+        }
+      }
+
+      // Quick suggestion buttons (appear after first message)
+      function addSuggestionButtons() {
+        const suggestionsDiv = document.createElement("div");
+        suggestionsDiv.classList.add(
+          "suggestions",
+          "mt-3",
+          "text-center",
+          "animate__animated",
+          "animate__fadeIn"
+        );
+
+        const suggestions = [
+          "Tell me a joke",
+          "What's the weather like?",
+          "Help me with coding",
+          "Write a poem",
+        ];
+
+        suggestions.forEach((suggestion) => {
+          const btn = document.createElement("button");
+          btn.classList.add("btn", "btn-sm", "btn-outline-primary", "m-1");
+          btn.textContent = suggestion;
+          btn.addEventListener("click", () => {
+            userInput.value = suggestion;
+            sendMessage();
+          });
+          suggestionsDiv.appendChild(btn);
+        });
+
+        // Add after a delay if API key exists
+        if (apiKey) {
+          setTimeout(() => {
+            chatMessages.appendChild(suggestionsDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 1000);
+        }
+      }
+
+      // Add suggestions after page loads
+      setTimeout(addSuggestionButtons, 2000);
+    </script>
+  </body>
+</html>
